@@ -1,6 +1,8 @@
 import {pool} from '../db.js'
 import bcrypt from 'bcryptjs'
 import {createAccessToken} from '../lib/jwt.js'
+import jwt from 'jsonwebtoken'
+import {JWT_KEY} from '../config.js'
 
 export const register = async(req, res)=>{
     try {
@@ -78,3 +80,27 @@ export const profile = async(req, res)=> {
         console.error(error)
     }
 }
+
+export const verifyToken = async (req, res) => {
+    try {
+        const { token } = req.cookies;
+        if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+        // Verifica el token y extrae el payload (que contiene el id)
+        jwt.verify(token, JWT_KEY, async (err, user) => {
+            if (err) return res.status(401).json({ message: "Unauthorized" });
+
+            // Ahora el payload user debería contener el id
+            const [userFound] = await pool.query('SELECT * FROM usuarios WHERE id_usuario = ?', [user.id]);
+            if (userFound.length === 0) return res.status(401).json({ message: 'Unauthorized' });
+
+            return res.json({
+                id: userFound[0].id_usuario,
+                usuario: userFound[0].usuario
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+

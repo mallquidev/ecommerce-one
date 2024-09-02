@@ -1,8 +1,8 @@
-import axios from 'axios'
+import axios from './axios'
 
 export const loginRequest = async(userData) => {
     try {
-        return await axios.post('http://localhost:3000/api/login', userData)
+        return await axios.post('/login', userData)
     } catch (error) {
         console.log(error)
     }
@@ -10,8 +10,10 @@ export const loginRequest = async(userData) => {
 
 export const registerRequest = async(user) => {
     try {
-        return await axios.post('http://localhost:3000/api/register', user)
+        return await axios.post('/register', user)
     } catch (error) {
         console.log(error)
     }
 }
+
+export const verifyTokenRequest = () => axios.get('/verify')
