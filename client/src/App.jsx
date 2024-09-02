@@ -1,4 +1,5 @@
 import React from 'react'
+import {AuthProvider} from './context/AuthContext'
 import { Routes, Route, BrowserRouter, useLocation } from 'react-router-dom'
 import NotFound from './pages/NotFound'
 import Home from './pages/Home'
@@ -15,6 +16,7 @@ import Login from './pages/Login'
 import Clientes from './admin/Clientes'
 import Categorias from './admin/Categorias'
 import Banners from './admin/Banners'
+import ProtectedRoute from './ProtectedRoute'
 
 const AppRoutes = () => {
   const location = useLocation()
@@ -28,6 +30,7 @@ const AppRoutes = () => {
 
   return (
     <>
+      <AuthProvider>
       {showNav5 && showNav4 && showNav3 && showNav2 && showNav && <Nav />}
       <Routes>
         <Route path='/' element={<Home />} />
@@ -36,13 +39,17 @@ const AppRoutes = () => {
         <Route path='/about' element={<AboutUs />} />
         <Route path='/carrito' element={<Carrito />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/admin/dashboard' element={<Dashboard />} />
-        <Route path='/admin/productos' element={<Productos />} />
-        <Route path='/admin/categorias' element={<Categorias />} />
-        <Route path='/admin/clientes' element={<Clientes />} />
-        <Route path='/admin/banners' element={<Banners />} />
+
+        <Route element={<ProtectedRoute/>}>
+          <Route path='/admin/dashboard' element={<Dashboard />} />
+          <Route path='/admin/productos' element={<Productos />} />
+          <Route path='/admin/categorias' element={<Categorias />} />
+          <Route path='/admin/clientes' element={<Clientes />} />
+          <Route path='/admin/banners' element={<Banners />} />
+        </Route>
         <Route path='*' element={<NotFound />} />
       </Routes>
+      </AuthProvider>
     </>
   )
 }

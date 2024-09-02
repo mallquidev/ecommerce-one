@@ -36,8 +36,16 @@ export const login = async(req, res) => {
         const isMatch = await bcrypt.compare(contrasena, user.contrasena)
         if(!isMatch) return res.status(203).json({message: 'Unauthorized'})
         const token = await createAccessToken({id: user.id_usuario})
-        res.cookie('token',token)
-        res.json(token)
+        res.cookie('token',token, {
+            sameSite:'none',
+            secure: true
+        })
+        
+        res.json({
+            token,
+            id: userFound[0].id_usuario,
+            usuario: userFound[0].usuario
+        })
 
     } catch (error) {
         res.status(500).json({message: error.message})

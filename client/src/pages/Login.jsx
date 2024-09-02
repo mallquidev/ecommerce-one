@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { Button } from '@nextui-org/button';
-import { login } from '../admin/api/auth';
+import {useAuth} from '../context/AuthContext'
 
 export default function Login() {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState('');
+  const { signin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const data = await login(usuario, contrasena);
-      console.log('Token', data.token);
+      await signin({ usuario, contrasena });
+      
+      
+      /*console.log('Token', data.token);
       localStorage.setItem('token', data.token);
-      window.location.href = '/admin/dashboard'
+      window.location.href = '/admin/dashboard'*/
     } catch (err) {
       setError(err.message);
     }
