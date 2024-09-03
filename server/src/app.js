@@ -3,6 +3,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import authRoutes from './routes/auth_routes.js'
 import categoryRoutes from './routes/category_routes.js'
+import productRoutes from './routes/product_routes.js'
 
 const app = express()
 app.use(cors({
@@ -14,5 +15,6 @@ app.use(cookieParser())
 
 app.use('/api', authRoutes)
 app.use('/api', categoryRoutes)
+app.use('/api', productRoutes)
 
 export default app;
