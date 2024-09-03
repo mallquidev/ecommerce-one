@@ -9,13 +9,12 @@ export const register = async(req, res)=>{
         const {usuario, contrasena} = req.body
         const passwordHash = await bcrypt.hash(contrasena, 10)
         const banner = 'banner'
-        // Obtener la fecha actual
+    
         const now = new Date();
         const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // Meses de 0 a 11
+        const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
-   
-        // Formatear la fecha para DATE
+
         const fecha_registro = `${year}-${month}-${day}`;
         const [result] = await pool.query('INSERT INTO usuarios(usuario, contrasena, banner, fecha_registro) VALUES(?,?,?,?)', [usuario, passwordHash, banner, fecha_registro])
         const token = await createAccessToken({id: result.insertId})
@@ -86,11 +85,9 @@ export const verifyToken = async (req, res) => {
         const { token } = req.cookies;
         if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-        // Verifica el token y extrae el payload (que contiene el id)
         jwt.verify(token, JWT_KEY, async (err, user) => {
             if (err) return res.status(401).json({ message: "Unauthorized" });
 
-            // Ahora el payload user debería contener el id
             const [userFound] = await pool.query('SELECT * FROM usuarios WHERE id_usuario = ?', [user.id]);
             if (userFound.length === 0) return res.status(401).json({ message: 'Unauthorized' });
 
