@@ -8,7 +8,6 @@ export const register = async(req, res)=>{
     try {
         const {usuario, contrasena} = req.body
         const passwordHash = await bcrypt.hash(contrasena, 10)
-        const banner = 'banner'
     
         const now = new Date();
         const year = now.getFullYear();
@@ -16,7 +15,7 @@ export const register = async(req, res)=>{
         const day = String(now.getDate()).padStart(2, '0');
 
         const fecha_registro = `${year}-${month}-${day}`;
-        const [result] = await pool.query('INSERT INTO usuarios(usuario, contrasena, banner, fecha_registro) VALUES(?,?,?,?)', [usuario, passwordHash, banner, fecha_registro])
+        const [result] = await pool.query('INSERT INTO usuarios(usuario, contrasena, fecha_registro) VALUES(?,?,?)', [usuario, passwordHash, fecha_registro])
         const token = await createAccessToken({id: result.insertId})
         res.cookie('token', token)
         res.json({

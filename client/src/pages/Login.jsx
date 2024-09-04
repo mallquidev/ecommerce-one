@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@nextui-org/button';
 import {useAuth} from '../context/AuthContext'
 
@@ -22,6 +22,7 @@ export default function Login() {
       setError(err.message);
     }
   }
+
 
   return (
     <>
