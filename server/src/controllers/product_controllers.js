@@ -1,4 +1,5 @@
 import {pool} from '../db.js'
+import fs from 'fs';
 
 export const getAllProduct = async (req, res) => {
     try {
@@ -35,9 +36,18 @@ export const getProduct = async(req, res) => {
     }
 }
 
+function saveImagen(file) {
+    const newPath = `./uploads/${file.originalname}`; 
+    fs.renameSync(file.path, newPath); 
+    return file.originalname; 
+}
 export const createProduct = async(req, res) => {
     try {
-        const { nombre, descripcion, precio, stock, id_categoria, imagen } = req.body;
+        const { nombre, descripcion, precio, stock, id_categoria } = req.body;
+        let imagen = null;
+        if (req.file) {
+            imagen = saveImagen(req.file);
+        }
         const fecha_creacion = new Date();
         const [result] = await pool.query(
             'INSERT INTO productos (nombre, descripcion, precio, stock, id_categoria, imagen, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -61,10 +71,13 @@ export const createProduct = async(req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        const [result] = await pool.query('DELETE FROM productos WHERE id_producto = ?', [req.params.id]);
-
-        if (result.affectedRows === 0) return res.sendStatus(404);
-
+        const [result] = await pool.query('SELECT imagen FROM productos WHERE id_producto = ?', [req.params.id]);
+        if (result.length === 0) return res.sendStatus(404);
+        const imagen = result[0].imagen;
+        const imagePath = `./uploads/${imagen}`;
+        const [deleteResult] = await pool.query('DELETE FROM productos WHERE id_producto = ?', [req.params.id]);
+        if (deleteResult.affectedRows === 0) return res.sendStatus(404);
+        deleteImagen(imagePath);
         res.sendStatus(204);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -72,15 +85,40 @@ export const deleteProduct = async (req, res) => {
     }
 };
 
+
+function deleteImagen(filepath) {
+    if (fs.existsSync(filepath)) {
+        fs.unlinkSync(filepath); 
+    }
+}
+
 export const updateProduct = async (req, res) => {
     try {
-        const [result] = await pool.query(`UPDATE productos SET ? WHERE id_producto = ?`,
-            [req.body, req.params.id]
+        const { nombre, descripcion, precio, stock, id_categoria } = req.body;
+        const id_producto = req.params.id;
+        const [result] = await pool.query('SELECT imagen FROM productos WHERE id_producto = ?', [id_producto]);
+        if (result.length === 0) return res.sendStatus(404);
+        const oldImage = result[0].imagen;
+
+        let imagen = oldImage;
+        if (req.file) {
+            const newImagePath = `./uploads/${req.file.originalname}`; 
+            fs.renameSync(req.file.path, newImagePath); 
+            imagen = req.file.originalname;
+            if (oldImage) {
+                const oldImagePath = `./uploads/${oldImage}`;
+                deleteImagen(oldImagePath);
+            }
+        }
+
+        const [updateResult] = await pool.query(
+            'UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, stock = ?, id_categoria = ?, imagen = ? WHERE id_producto = ?',
+            [nombre, descripcion, precio, stock, id_categoria, imagen, id_producto]
         );
 
-        if (result.affectedRows === 0) return res.sendStatus(404);
+        if (updateResult.affectedRows === 0) return res.sendStatus(404);
 
-        const [updatedProduct] = await pool.query('SELECT * FROM productos WHERE id_producto = ?', [req.params.id]);
+        const [updatedProduct] = await pool.query('SELECT * FROM productos WHERE id_producto = ?', [id_producto]);
 
         res.json(updatedProduct[0]);
     } catch (error) {
