@@ -1,106 +1,163 @@
-import React from 'react'
-import AsideNav from './components/AsideNav'
+import { useEffect, useState } from 'react';
+import AsideNav from './components/AsideNav';
+import { useCategory } from '../context/CategoryContext';
+import CategoryCard from '../components/CategoryCard'
+
 export default function Categorias() {
+  // Estado para controlar si el modal está abierto o cerrado
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [nombre, setNombre] = useState('')
+  const [descripcion, setDescripcion] = useState('')
+  const {createCategory, getCategorys, category} = useCategory()
+  console.log(createCategory)
+
+  // Función para abrir el modal
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    createCategory({nombre, descripcion})
+  }
+
+  useEffect(()=> {
+    getCategorys()
+  },[])
+
   return (
     <>
       <div className="flex h-screen">
         <AsideNav />
 
         <div className="flex-1 p-10 bg-gray-100 ">
-          <div>
-            {/* <button className='md:hidden block' onClick={toggleSidebar} >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                                <path fillRule="evenodd" d="M3 9a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 9Zm0 6.75a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
-                            </svg>
-                        </button> */}
-          </div>
           <h2 className="text-3xl font-black text-zinc-800 mb-6">Categorias</h2>
-      
-          <div className="">
-            <div className="p-6 overflow-scroll px-0">
-              <table className="w-full min-w-max table-auto text-left">
-                <thead>
-                  <tr>
-                    <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                      <p className="block antialiased font-sans text-sm text-blue-gray-900 font-normal leading-none opacity-70">Transaction</p>
-                    </th>
-                    <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                      <p className="block antialiased font-sans text-sm text-blue-gray-900 font-normal leading-none opacity-70">Amount</p>
-                    </th>
-                    <th class="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                      <p class="block antialiased font-sans text-sm text-blue-gray-900 font-normal leading-none opacity-70">Date</p>
-                    </th>
-                    <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                      <p className="block antialiased font-sans text-sm text-blue-gray-900 font-normal leading-none opacity-70">Status</p>
-                    </th>
-                    <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                      <p className="block antialiased font-sans text-sm text-blue-gray-900 font-normal leading-none opacity-70">Account</p>
-                    </th>
-                    <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                      <p className="block antialiased font-sans text-sm text-blue-gray-900 font-normal leading-none opacity-70"></p>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <div className="flex items-center gap-3">
-                        <img src="https://docs.material-tailwind.com/img/logos/logo-spotify.svg" alt="Spotify" className="inline-block relative object-center  w-12 h-12 rounded-lg border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1 " />
-                        <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-bold">Spotify</p>
-                      </div>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">$2,500</p>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">Wed 3:00pm</p>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <div className="w-max">
-                        <div className="relative grid items-center font-sans font-bold uppercase whitespace-nowrap select-none bg-green-500/20 text-green-900 py-1 px-2 text-xs rounded-md" >
-                          <span className="">paid</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                          <img src="https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/visa.png" alt="visa" className="inline-block relative object-center  rounded-md h-full w-full object-contain p-1 " />
-                        </div>
-                        <div className="flex flex-col">
-                          <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal capitalize">visa
 
-                          </p>
-                          <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal opacity-70">06/2026</p>
-                        </div>
+          <div className="p-6 overflow-scroll px-0">
+            {/* Botón para abrir/cerrar el modal */}
+            <button
+              onClick={toggleModal}
+              className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              type="button"
+            >
+              Crear Categoria
+            </button>
+
+            {/* Modal */}
+            <div
+              id="authentication-modal"
+              tabIndex="-1"
+              aria-hidden="true"
+              className={`${
+                isModalOpen ? 'flex' : 'hidden'
+              } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+            >
+              <div className="relative p-4 w-full max-w-md max-h-full">
+                <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                  <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      Crear Categoria
+                    </h3>
+                    {/* Botón para cerrar el modal */}
+                    <button
+                      type="button"
+                      onClick={toggleModal}
+                      className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
+                      <svg
+                        className="w-3 h-3"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 14 14"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                        />
+                      </svg>
+                      <span className="sr-only">Close modal</span>
+                    </button>
+                  </div>
+                  <div className="p-4 md:p-5">
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                      <div>
+                        <label
+                          htmlFor="nombre"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Nombre Categoria
+                        </label>
+                        <input
+                          type="text"
+                          name="nombre"
+                          value={nombre}
+                          onChange={(e)=> setNombre(e.target.value)}
+                          id="nombre"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          required
+                        />
                       </div>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <button className="relative align-middle select-none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-900 hover:bg-gray-900/10 active:bg-gray-900/20" type="button">
-                        <span className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-4 w-4">
-                            <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
-                          </svg>
-                        </span>
+                      <div>
+                        <label
+                          htmlFor="descripcion"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          descripcion
+                        </label>
+                        <input
+                          type="text"
+                          name="descripcion"
+                          value={descripcion}
+                          onChange={(e)=>setDescripcion(e.target.value)}
+                          id="descripcion"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          required
+                        />
+                      </div>
+                      <div className="flex justify-between">
+                        <div className="flex items-start">
+                          <div className="flex items-center h-5">
+                            <input
+                              id="remember"
+                              type="checkbox"
+                              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+                              required
+                            />
+                          </div>
+                          <label
+                            htmlFor="remember"
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                          >
+                            Estas seguro?
+                          </label>
+                        </div>
+                        
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
+                        Crear
                       </button>
-                    </td>
-                  </tr>
-
-                </tbody>
-              </table>
-              <div class="w-full pt-5 px-4 mb-8 mx-auto ">
-                <div class="text-sm text-gray-700 py-1">
-                  Made with <a class="text-gray-700 font-semibold" href="https://www.material-tailwind.com/?ref=tailwindcomponents" target="_blank">Material Tailwind</a> by <a href="https://www.creative-tim.com?ref=tailwindcomponents" class="text-gray-700 font-semibold" target="_blank"> Creative Tim</a>.
+                     
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
-            <div>
-
-            </div>
-
+              {
+                category.map(categor => (
+                  <CategoryCard categor={categor} key={categor.id_categoria} />
+                ))
+              }
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }

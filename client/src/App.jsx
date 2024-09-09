@@ -17,6 +17,7 @@ import Clientes from './admin/Clientes'
 import Categorias from './admin/Categorias'
 import Banners from './admin/Banners'
 import ProtectedRoute from './ProtectedRoute'
+import { CategoryProvider } from './context/CategoryContext'
 
 const AppRoutes = () => {
   const location = useLocation()
@@ -31,24 +32,27 @@ const AppRoutes = () => {
   return (
     <>
       <AuthProvider>
-      {showNav5 && showNav4 && showNav3 && showNav2 && showNav && <Nav />}
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/shop' element={<Shop />} />
-        <Route path='/shop/product/:id' element={<Product productos={data} />} />
-        <Route path='/about' element={<AboutUs />} />
-        <Route path='/carrito' element={<Carrito />} />
-        <Route path='/login' element={<Login />} />
-
-        <Route element={<ProtectedRoute/>}>
-          <Route path='/admin/dashboard' element={<Dashboard />} />
-          <Route path='/admin/productos' element={<Productos />} />
-          <Route path='/admin/categorias' element={<Categorias />} />
-          <Route path='/admin/clientes' element={<Clientes />} />
-          <Route path='/admin/banners' element={<Banners />} />
-        </Route>
-        <Route path='*' element={<NotFound />} />
-      </Routes>
+      <CategoryProvider>
+        {showNav5 && showNav4 && showNav3 && showNav2 && showNav && <Nav />}
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/shop' element={<Shop />} />
+          <Route path='/shop/product/:id' element={<Product productos={data} />} />
+          <Route path='/about' element={<AboutUs />} />
+          <Route path='/carrito' element={<Carrito />} />
+          <Route path='/login' element={<Login />} />
+    
+          <Route element={<ProtectedRoute/>}>
+            <Route path='/admin/dashboard' element={<Dashboard />} />
+            <Route path='/admin/productos' element={<Productos />} />
+            <Route path='/admin/categorias' element={<Categorias />} />
+            <Route path='/admin/clientes' element={<Clientes />} />
+            <Route path='/admin/banners' element={<Banners />} />
+          </Route>
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </CategoryProvider>
+      
       </AuthProvider>
     </>
   )
