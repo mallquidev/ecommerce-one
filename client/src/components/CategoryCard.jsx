@@ -1,4 +1,5 @@
 import {useCategory} from '../context/CategoryContext'
+import {Link} from 'react-router-dom'
 
 
 function CategoryCard({categor}) {
@@ -12,7 +13,7 @@ function CategoryCard({categor}) {
       <button onClick={()=>{
         deleteCategory(categor.id_categoria)
       }} className="border-rose-700 border p-2">Eliminar</button>
-      <button className='border-emerald-600 border p-2'>Editar</button>
+      <Link className='border-emerald-600 border p-2' to={`/admin/categoryform/${categor.id_categoria}`}>Editar</Link>
     </div>
   );
 }

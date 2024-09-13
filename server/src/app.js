@@ -6,8 +6,18 @@ import categoryRoutes from './routes/category_routes.js'
 import productRoutes from './routes/product_routes.js'
 import imageRoutes from './routes/image_routes.js'
 import imageProduct from './routes/image_product_routes.js'
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 
 const app = express()
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configuración para servir archivos estáticos desde el directorio 'uploads'
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true

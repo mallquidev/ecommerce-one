@@ -17,3 +17,11 @@ export const registerRequest = async(user) => {
 }
 
 export const verifyTokenRequest = () => axios.get('/verify')
+
+export const logoutRequest = async () => {
+    try {
+        return await axios.post('/logout');
+    } catch (error) {
+        console.error(error);
+    }
+}

@@ -6,7 +6,7 @@ export const getCategoryRequest = (id) => axios.get(`/category/${id}`)
 
 export const createCategoryRequest = (category) => axios.post('/category', category)
 
-export const updateCategoryRequest = (category) => 
-    axios.put(`/category/${category.id_categoria}`, category)
+export const updateCategoryRequest = (id, category) => 
+    axios.put(`/category/${id}`, category)
 
 export const deleteCategoryRequest = (id) => axios.delete(`/category/${id}`)

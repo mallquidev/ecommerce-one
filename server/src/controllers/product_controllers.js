@@ -29,7 +29,7 @@ export const getProduct = async(req, res) => {
              INNER JOIN categorias c ON p.id_categoria = c.id_categoria
              WHERE p.id_producto = ?`,[req.params.id])
         if(result.length === 0) return res.sendStatus(404)
-        res.json(result)
+        res.json(result[0])
     } catch (error) {
         res.status(500).json({message: error.message})
         console.log(error)

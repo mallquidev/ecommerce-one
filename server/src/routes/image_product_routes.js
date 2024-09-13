@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { createImageProduct, getAllImageProduct, deleteImageProduct } from '../controllers/image_product_controllers.js';
+import { createImageProduct, getAllImageProduct, deleteImageProduct, getImageProduct } from '../controllers/image_product_controllers.js';
 
 const router = Router();
 
@@ -16,6 +16,8 @@ const upload = multer({ storage });
 router.post('/imgproduct', upload.array('imagenes', 5), createImageProduct);
 
 router.get('/imgproduct', getAllImageProduct);
+
+router.get('/imgproduct/:id', getImageProduct);
 
 router.delete('/imgproduct/:id_imagen', deleteImageProduct);
 

@@ -18,6 +18,10 @@ import Categorias from './admin/Categorias'
 import Banners from './admin/Banners'
 import ProtectedRoute from './ProtectedRoute'
 import { CategoryProvider } from './context/CategoryContext'
+import CategoryForm from './admin/CategoryForm'
+import ProductForm from './admin/ProductForm'
+import { ProductProvider } from './context/ProductContext'
+import ProductImg from './admin/ProductImg'
 
 const AppRoutes = () => {
   const location = useLocation()
@@ -27,31 +31,45 @@ const AppRoutes = () => {
   const showNav3 = !location.pathname.startsWith('/admin/categorias')
   const showNav4 = !location.pathname.startsWith('/admin/clientes')
   const showNav5 = !location.pathname.startsWith('/admin/banners')
+  const showNav6 = !location.pathname.startsWith('/admin/categoryform')
+  const showNav7 = !location.pathname.startsWith('/admin/productform')
+  const showNav8 = !location.pathname.startsWith('/admin/productimg')
 
 
   return (
     <>
       <AuthProvider>
-      <CategoryProvider>
-        {showNav5 && showNav4 && showNav3 && showNav2 && showNav && <Nav />}
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/shop' element={<Shop />} />
-          <Route path='/shop/product/:id' element={<Product productos={data} />} />
-          <Route path='/about' element={<AboutUs />} />
-          <Route path='/carrito' element={<Carrito />} />
-          <Route path='/login' element={<Login />} />
-    
-          <Route element={<ProtectedRoute/>}>
-            <Route path='/admin/dashboard' element={<Dashboard />} />
-            <Route path='/admin/productos' element={<Productos />} />
-            <Route path='/admin/categorias' element={<Categorias />} />
-            <Route path='/admin/clientes' element={<Clientes />} />
-            <Route path='/admin/banners' element={<Banners />} />
-          </Route>
-          <Route path='*' element={<NotFound />} />
-        </Routes>
-      </CategoryProvider>
+        <CategoryProvider>
+          <ProductProvider>
+            {showNav8 && showNav7 && showNav6 && showNav5 && showNav4 && showNav3 && showNav2 && showNav && <Nav />}
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/shop' element={<Shop />} />
+              <Route path='/shop/product/:id' element={<Product productos={data} />} />
+              <Route path='/about' element={<AboutUs />} />
+              <Route path='/carrito' element={<Carrito />} />
+              <Route path='/login' element={<Login />} />
+        
+              <Route element={<ProtectedRoute/>}>
+                <Route path='/admin/dashboard' element={<Dashboard />} />
+                <Route path='/admin/productos' element={<Productos />} />
+                <Route path='/admin/categorias' element={<Categorias />} />
+                <Route path='/admin/clientes' element={<Clientes />} />
+                <Route path='/admin/banners' element={<Banners />} />
+                <Route path='/admin/categoryform' element={<CategoryForm />} />
+                <Route path='/admin/categoryform/:id' element={<CategoryForm />} />
+                <Route path='/admin/productform' element={<ProductForm />} />
+                <Route path='/admin/productform/:id' element={<ProductForm />} />
+                <Route path='/admin/productimg/:id' element={<ProductImg />} />
+
+      
+                
+              </Route>
+              <Route path='*' element={<NotFound />} />
+            </Routes> 
+          </ProductProvider>
+          
+        </CategoryProvider>
       
       </AuthProvider>
     </>

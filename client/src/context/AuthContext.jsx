@@ -1,5 +1,5 @@
 import {createContext, useState, useContext, useEffect} from 'react'
-import { loginRequest, verifyTokenRequest } from '../admin/api/auth';
+import { loginRequest, verifyTokenRequest, logoutRequest } from '../admin/api/auth';
 import Cookies from 'js-cookie'
 import {useNavigate} from 'react-router-dom'
 
@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }) => {
             
             
             if (res.data && res.data.token) {
-                console.log('Token recibido:', res.data.token);
                 Cookies.set('token', res.data.token); 
                 setIsAuthenticated(true);
                 setUser(res.data.user);
@@ -41,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
       async function checkLogin() {
         const cookies = Cookies.get()
-        console.log(cookies)
+        
         if(!cookies.token) {
             setIsAuthenticated(false)
             setLoading(false)
@@ -50,7 +49,7 @@ export const AuthProvider = ({ children }) => {
         }
             try {
                 const res = await verifyTokenRequest(cookies.token)
-                console.log(res)
+                
                 if(!res.data) {
                     setIsAuthenticated(false)
                     setLoading(false)
@@ -66,10 +65,22 @@ export const AuthProvider = ({ children }) => {
                 setUser(null)
                 setLoading(false)
             }
-            console.log(cookies.token)
+            
       }
       checkLogin()
     }, [])
+
+    const logout = async () => {
+        try {
+            await logoutRequest(); 
+            Cookies.remove('token'); 
+            setIsAuthenticated(false);
+            setUser(null);
+            navigate('/login'); 
+        } catch (error) {
+            console.error('Error en logout:', error);
+        }
+    };
     
 
     return(
@@ -77,7 +88,8 @@ export const AuthProvider = ({ children }) => {
             signin,
             user,
             isAuthenticated,
-            loading
+            loading,
+            logout
         }}>
             {children}
         </AuthContext.Provider>

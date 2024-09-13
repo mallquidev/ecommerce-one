@@ -1,5 +1,5 @@
 import {createContext, useContext, useState} from 'react'
-import {createCategoryRequest, getCategorysRequest, deleteCategoryRequest} from '../admin/api/category'
+import {createCategoryRequest, getCategorysRequest, deleteCategoryRequest, getCategoryRequest, updateCategoryRequest} from '../admin/api/category'
 
 const CategoryContext = createContext()
 
@@ -27,6 +27,7 @@ export function CategoryProvider({children}){
 
     const createCategory = async(category) => {
         const response = await createCategoryRequest(category)
+        await getCategorys();
         console.log(response)
     }
 
@@ -39,13 +40,35 @@ export function CategoryProvider({children}){
         }
     }
 
+    const getCategory = async(id) => {
+        try {
+            const res = await getCategoryRequest(id)
+            console.log(res)
+            return res.data
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const updateCategory = async(id, category) => {
+        try {
+            const res = await updateCategoryRequest(id, category)
+            await getCategorys();
+            console.log(`esta es la respuesta ${res}`)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return(
         <CategoryContext.Provider 
             value={{
                 category,
                 createCategory,
                 getCategorys,
-                deleteCategory
+                deleteCategory,
+                getCategory,
+                updateCategory
             }}>
             {children}
         </CategoryContext.Provider>
